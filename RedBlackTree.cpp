@@ -114,7 +114,7 @@ public:
 	void RightRotation(Node* x)
 	{
 		Node* y = x->right_child;
-		y->parent = x;
+		y->parent = x->parent;
 		if (x->parent != NULL)
 		{
 			((x->parent->left_child == x) ? x->parent->left_child : x->parent->right_child) = y;
@@ -130,6 +130,26 @@ public:
 			x->right_child->parent = x;
 		}
 		y->left_child = x;
+		x->parent = y;
+	}
+	void LeftRotation(Node* x)
+	{
+		Node* y = x->left_child;
+		y->parent = x->parent;
+		if (x->parent)
+		{
+			(x->parent->left_child == x ? x->parent->left_child : x->parent->right_child) = y;
+		}
+		else
+		{
+			root = y;
+		}
+		x->left_child = y->right_child;
+		if (x->left_child)
+		{
+			x->left_child->parent = x;
+		}
+		y->right_child = x;
 		x->parent = y;
 	}
 private:
@@ -155,7 +175,7 @@ int main()
 	}
 	std::sort(arr.begin(), arr.end(), cmp);
 	tree.print(tree.get_root());
-	tree.RightRotation(tree.get_root());
+	tree.LeftRotation(tree.get_root());
 	std::cout << "After rotation\n";
 	tree.print(tree.get_root());
 	system("pause");
