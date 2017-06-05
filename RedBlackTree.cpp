@@ -102,6 +102,36 @@ public:
 		}
 		return 0;
 	}
+	void print(Node* start)
+	{
+		if (start)
+		{
+			printf("Node: %4d	Parent: %4d		Right: %4d		Left: %4d\n", start->key, (start->parent ? start->parent->key : 0), (start->right_child ? start->right_child->key : 0), (start->left_child ? start->left_child->key : 0));
+			print(start->right_child);
+			print(start->left_child);
+		}
+	}
+	void RightRotation(Node* x)
+	{
+		Node* y = x->right_child;
+		y->parent = x;
+		if (x->parent != NULL)
+		{
+			((x->parent->left_child == x) ? x->parent->left_child : x->parent->right_child) = y;
+		}
+		else
+		{
+			y->parent = NULL;
+			root = y;
+		}
+		x->right_child = y->left_child;
+		if (x->right_child != NULL)
+		{
+			x->right_child->parent = x;
+		}
+		y->left_child = x;
+		x->parent = y;
+	}
 private:
 	Node* root = NULL;
 	int count_nodes = 0;
@@ -116,23 +146,18 @@ int main()
 	srand(time(NULL));
 	RedBlackTree<int> tree;
 	std::vector<int> arr;
-	for (int i = 0; i < 3000; i++)
+	int a[] = { 7,3,16,9,25 };
+	for (int i = 0; i < 5; i++)
 	{
-		int elem = rand() % 300;
-		tree.add_element(i);
+		int elem = rand() % 30;
+		tree.add_element(a[i]);
 		arr.push_back(elem);
 	}
 	std::sort(arr.begin(), arr.end(), cmp);
-	/*printf("Array: \n");
-	for (int i = 0; i < arr.size(); i++)
-	{
-		printf("%4d", arr[i]);
-	}
-	printf("\nFrom tree:\n");
-	tree.print_sorted(tree.get_root());
-	printf("\n");*/
-	printf("Count nodes: %4d log(count_nodes): %4.1f\n", tree.get_count_nodes(), log2(tree.get_count_nodes()));
-	printf("Tree high: %4d\n", tree.get_high(tree.get_root())-1);
+	tree.print(tree.get_root());
+	tree.RightRotation(tree.get_root());
+	std::cout << "After rotation\n";
+	tree.print(tree.get_root());
 	system("pause");
 	return 0;
 }
