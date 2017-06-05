@@ -83,6 +83,8 @@ public:
 		{
 			root = newNode;
 			newNode->parent = NULL;
+			root->color = black;
+			return;
 		}
 		else
 		{
@@ -90,7 +92,57 @@ public:
 			newNode->parent = prev;
 		}
 		// balancing tree
-
+		Node* y;
+		Node* x = newNode;
+		while ((newNode != NULL)&&(x->parent->color == red))
+		{
+			// finding uncle (y)
+			if (x->parent == x->parent->parent->left_child) // if uncle - right child
+			{
+				y = x->parent->parent->right_child;
+				if ((y != NULL) && (y->color == red)) // if uncle is red
+				{
+					x->parent->color = black;
+					x->parent->parent->color = red;
+					y->color = black;
+					x = x->parent->parent;
+				}
+				else // if uncle is black
+				{
+					if (x == x->parent->right_child) // if x - right child
+					{
+						x = x->parent;
+						LeftRotation(x);
+					}
+					x->parent->color = black;
+					x->parent->parent->color = red;
+					RightRotation(x->parent->parent);
+				}
+			}
+			else // if uncle - left child
+			{
+				y = x->parent->parent->left_child;
+				if ((y != NULL) && (y->color == red))
+				{
+					x->parent->color = black;
+					x->parent->parent->color = red;
+					y->color = black;
+					x = x->parent->parent;
+				}
+				else
+				{
+					if (x == x->parent->left_child)
+					{
+						x = x->parent;
+						RightRotation(x);
+					}
+					x->parent->color = black;
+					x->parent->parent->color = red;
+					LeftRotation(x->parent->parent);
+				}
+			}
+			root->color = black;
+		}
 	}
 	int get_high(Node* startNode)
 	{
@@ -167,17 +219,15 @@ int main()
 	RedBlackTree<int> tree;
 	std::vector<int> arr;
 	int a[] = { 7,3,16,9,25 };
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		int elem = rand() % 30;
-		tree.add_element(a[i]);
+		tree.add_element(i);
 		arr.push_back(elem);
 	}
 	std::sort(arr.begin(), arr.end(), cmp);
-	tree.print(tree.get_root());
-	tree.LeftRotation(tree.get_root());
-	std::cout << "After rotation\n";
-	tree.print(tree.get_root());
+	std::cout << "High tree: " << tree.get_high(tree.get_root()) << std::endl;
+	tree.print_sorted(tree.get_root());
 	system("pause");
 	return 0;
 }
